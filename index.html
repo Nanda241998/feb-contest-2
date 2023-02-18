@@ -1,0 +1,167 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <!-- Page Title -->
+    <title>Project F2</title>
+    <style>
+        h1{
+            color: white;
+            font-size: 35px;
+        }
+        label{
+            color: white;
+            font-size: 25px;
+        }
+        .container{
+            
+           box-sizing: border-box;
+           border: 1px solid white;
+           padding: 30px;
+           color: black;
+           background-color: black;
+           height: 622px;
+        }
+
+        table {
+          border-collapse: collapse;
+          width: 100%;
+          color: white;
+  
+         }
+
+th,td {
+  text-align: left;
+  padding: 15px;
+  border: 1px solid white;
+  color: white;
+}
+
+th {
+  background-color: black;
+  border-color: white;
+  color: white;
+  padding: 20px;
+    
+}
+
+tr:nth-child(even) {
+  background-color: black;
+  color: white;
+ 
+}
+
+.status-returned {
+  color: green;
+}
+
+.status-not-returned {
+  color: red;
+}
+
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Library Management System</h1><br>
+        <form>
+          <label for="book_name">Book Name&nbsp;:&nbsp;&nbsp;</label>
+          <input type="text" id="book_name" name="book_name" style="background-color: black; border-color: white; width: 300px; height: 30px;color: white;" required><br><br>
+          <label for="issued_to">Issued To &nbsp;&nbsp;&nbsp;&nbsp;: &nbsp;</label>
+          <input type="text" id="issued_to" name="issued_to" style="background-color: black; border-color: white; width: 300px; height: 30px;color: white;"required><br><br>
+      <br>
+          <button type="button" style="width:460px; height:35px; font-size: 20px;"onclick="issueBook()">Issue Book</button><br><br>
+        </form>
+      <br>
+        <table>
+          <thead >
+            <tr style="background-color: black; color: black;border-color: white;">
+              <th>ID</th>
+              <th>Book Name</th>
+              <th>Issued To</th>
+              <th>Issued Date and Time</th>
+              <th>Status</th>
+              
+            </tr>
+            
+          </thead>
+          <tbody id="issued_books"></tbody>
+        </table>
+      </div>
+      <script>
+        // Define array to store issued books
+let issuedBooks = [];
+// Get references to HTML elements
+const bookNameInput = document.getElementById("book_name");
+const issuedToInput = document.getElementById("issued_to");
+const issuedBooksTable = document.getElementById("issued_books");
+
+// Function to issue a book
+function issueBook() {
+  // Get current time
+  const issuedTime = new Date().toLocaleString();
+
+  // Add book to array
+  issuedBooks.push({
+    id: issuedBooks.length + 1,
+    book_name: bookNameInput.value,
+    issued_to: issuedToInput.value,
+    issued_time: issuedTime,
+    status: "not returned"
+  });
+
+  // Update table with issued books
+  updateIssuedBooksTable();
+
+  // Clear form inputs
+  bookNameInput.value = "";
+  issuedToInput.value = "";
+}
+
+// Function to update the issued books table
+function updateIssuedBooksTable() {
+  // Clear existing rows
+  issuedBooksTable.innerHTML = "";
+
+  // Add rows for each issued book
+  issuedBooks.forEach(book => {
+    const row = issuedBooksTable.insertRow();
+    row.innerHTML = `
+      <td>${book.id}</td>
+      <td>${book.book_name}</td>
+      <td>${book.issued_to}</td>
+      <td>${book.issued_time}</td>
+      <td class="status-${book.status}" contenteditable="true">${book.status}</td>
+    `;
+  });
+
+  // Add event listener to status cells
+  const statusCells = document.querySelectorAll("#issued_books td.status");
+  statusCells.forEach(cell => {
+    cell.addEventListener("blur", () => {
+      const status = cell.innerText.trim().toLowerCase();
+      if (status === "returned" || status === "not returned") {
+        const row = cell.parentNode;
+        const id = parseInt(row.firstChild.innerText);
+        const book = issuedBooks.find(book => book.id === id);
+        book.status = status;
+        cell.classList.remove("status-returned", "status-not-returned");
+        cell.classList.add(`status-${status.replace(" ", "-")}`);
+      } else {
+        cell.innerText = book.status;
+      }
+    });
+  });
+}
+
+// Initialize table on page load
+console.log(updateIssuedBooksTable);
+
+      </script>
+</body>
+
+</html>
